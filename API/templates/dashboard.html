@@ -1,0 +1,241 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Dashboard - Online
+Trading System {% endblock %} {% block content %}
+<div class="bg-white shadow-lg p-4 rounded-lg mb-8">
+  <!-- Wallet Balance -->
+  <h3 class="text-lg font-semibold">Wallet Balance</h3>
+  <p class="text-2xl text-green-600">Rs. {{ profile.balance }}</p>
+
+  <div class="mt-4 space-y-4">
+    <!-- Quick Add Buttons -->
+    <div class="flex flex-wrap gap-2">
+      <form method="POST" action="{% url 'add_money' %}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="amount" value="10000" />
+        <button
+          type="submit"
+          class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+        >
+          Add Rs. 10,000
+        </button>
+      </form>
+      <form method="POST" action="{% url 'add_money' %}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="amount" value="20000" />
+        <button
+          type="submit"
+          class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+        >
+          Add Rs. 20,000
+        </button>
+      </form>
+      <form method="POST" action="{% url 'add_money' %}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="amount" value="50000" />
+        <button
+          type="submit"
+          class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+        >
+          Add Rs. 50,000
+        </button>
+      </form>
+    </div>
+
+    <!-- Custom Amount Input -->
+    <form method="POST" action="{% url 'add_money' %}" class="flex gap-2">
+      {% csrf_token %}
+      <input
+        type="number"
+        name="amount"
+        min="1000"
+        step="1000"
+        class="border p-2 rounded-md flex-grow"
+        placeholder="Enter custom amount"
+        required
+      />
+      <button
+        type="submit"
+        class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+      >
+        Add Custom Amount
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Stock Search -->
+<div class="bg-white shadow-lg p-4 rounded-lg mb-8">
+  <h3 class="text-lg font-semibold mb-4">Search for Stock</h3>
+  <form method="POST" id="searchForm">
+    {% csrf_token %}
+    <div class="flex gap-2">
+      <div class="relative flex-grow">
+        <input
+          type="text"
+          name="search_name"
+          id="searchInput"
+          class="border p-2 rounded-md w-full"
+          placeholder="Search by stock name or symbol (e.g. RELIANCE or Reliance Industries)"
+          list="stockSuggestions"
+          autocomplete="off"
+          required
+        />
+        <datalist id="stockSuggestions">
+          <!-- Suggestions will be populated here -->
+        </datalist>
+        <div
+          id="searchResults"
+          class="absolute w-full bg-white border rounded-md mt-1 shadow-lg hidden"
+        >
+          <!-- Live search results will appear here -->
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 whitespace-nowrap"
+      >
+        Search
+      </button>
+    </div>
+  </form>
+
+  {% if stock_data %}
+  <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+    <h4 class="text-lg font-semibold">
+      {{ stock_data.name }} ({{ stock_data.symbol }})
+    </h4>
+    <div class="grid grid-cols-2 gap-4 mt-2">
+      <div>
+        <p class="text-sm text-gray-600">Current Price</p>
+        <p class="text-lg font-bold">Rs. {{ stock_data.price }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Change</p>
+        <p
+          class="text-lg font-bold {% if stock_data.change >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
+        >
+          {{ stock_data.change }}%
+        </p>
+      </div>
+    </div>
+
+    <!-- Buy/Sell Forms -->
+    <div class="mt-4 space-y-4">
+      <!-- Buy Form -->
+      <form method="POST" class="flex gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="buy" />
+        <input type="hidden" name="symbol" value="{{ stock_data.symbol }}" />
+        <input type="hidden" name="price" value="{{ stock_data.price }}" />
+        <input
+          type="number"
+          name="quantity"
+          min="1"
+          class="border p-2 rounded-md flex-grow"
+          placeholder="Enter quantity to buy"
+          required
+        />
+        <button
+          type="submit"
+          class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+        >
+          Buy
+        </button>
+      </form>
+
+      <!-- Sell Form -->
+      <form method="POST" class="flex gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="sell" />
+        <input type="hidden" name="symbol" value="{{ stock_data.symbol }}" />
+        <input type="hidden" name="price" value="{{ stock_data.price }}" />
+        <input
+          type="number"
+          name="quantity"
+          min="1"
+          class="border p-2 rounded-md flex-grow"
+          placeholder="Enter quantity to sell"
+          required
+        />
+        <button
+          type="submit"
+          class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+        >
+          Sell
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  // Auto-hide messages after 5 seconds
+  $(document).ready(function () {
+    setTimeout(function () {
+      $(".message-item").fadeOut("slow", function () {
+        $(this).remove();
+      });
+    }, 5000);
+
+    // Live search functionality
+    let searchTimeout;
+    $("#searchInput").on("input", function () {
+      clearTimeout(searchTimeout);
+      const query = $(this).val();
+
+      if (query.length >= 2) {
+        searchTimeout = setTimeout(function () {
+          $.ajax({
+            url: '{% url "search_stocks" %}',
+            type: "GET",
+            data: { query: query },
+            success: function (response) {
+              // Clear previous suggestions
+              $("#stockSuggestions").empty();
+              $("#searchResults").empty();
+
+              // Add new suggestions
+              response.results.forEach(function (stock) {
+                // Add to datalist for native browser suggestions
+                $("#stockSuggestions").append(
+                  `<option value="${stock.symbol}">${stock.name} (${stock.symbol})</option>`
+                );
+
+                // Add to custom dropdown
+                $("#searchResults").append(
+                  `<div class="p-2 hover:bg-gray-100 cursor-pointer search-result" 
+                        data-symbol="${stock.symbol}">
+                     <div class="font-semibold">${stock.symbol}</div>
+                     <div class="text-sm text-gray-600">${stock.name}</div>
+                   </div>`
+                );
+              });
+
+              if (response.results.length > 0) {
+                $("#searchResults").removeClass("hidden");
+              }
+            },
+          });
+        }, 300); // Delay for 300ms to prevent too many requests
+      } else {
+        $("#searchResults").addClass("hidden");
+      }
+    });
+
+    // Handle click on search result
+    $(document).on("click", ".search-result", function () {
+      const symbol = $(this).data("symbol");
+      $("#searchInput").val(symbol);
+      $("#searchResults").addClass("hidden");
+      $("#searchForm").submit();
+    });
+
+    // Hide search results when clicking outside
+    $(document).on("click", function (e) {
+      if (!$(e.target).closest("#searchInput, #searchResults").length) {
+        $("#searchResults").addClass("hidden");
+      }
+    });
+  });
+</script>
+{% endblock %}

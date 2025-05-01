@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .transaction-table {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;  /* Medium weight for base table */
+    }
+    
+    .transaction-amount, .transaction-date, .transaction-type, .transaction-details {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;  /* Bold weight for amounts, dates, types, and details */
+    }
+
+    .table th {
+        font-weight: 700;  /* Bold headers */
+        font-family: 'Poppins', sans-serif;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center space-x-3">
+            <h2 class="text-3xl font-bold text-gray-800">Transaction History</h2>
+            <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full">All Time</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-500">{{ transactions.count }} transactions</span>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" class="px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-lg shadow-sm hover:bg-indigo-100 text-sm font-medium text-indigo-700 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+                    </svg>
+                    <span>Filter</span>
+                </button>
+                <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-10">
+                    <a href="?type=all" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">All Transactions</a>
+                    <a href="?type=buy" class="block px-4 py-2 text-sm text-violet-700 hover:bg-violet-50">Buy Orders</a>
+                    <a href="?type=sell" class="block px-4 py-2 text-sm text-emerald-700 hover:bg-emerald-50">Sell Orders</a>
+                    <a href="?type=deposit" class="block px-4 py-2 text-sm text-teal-700 hover:bg-teal-50">Deposits</a>
+                    <a href="?type=withdrawal" class="block px-4 py-2 text-sm text-rose-700 hover:bg-rose-50">Withdrawals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if transactions %}
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <th class="group px-6 py-4 text-left">
+                            <div class="flex items-center space-x-2 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                <span>Date & Time</span>
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for transaction in transactions %}
+                    <tr class="hover:bg-gray-50/70 transition-all duration-200">
+                        <td class="px-6 py-4 transaction-date">
+                            <div class="text-sm font-semibold text-gray-900">{{ transaction.date|date:"M d, Y" }}</div>
+                            <div class="text-xs text-gray-500 mt-0.5">{{ transaction.date|date:"h:i A" }}</div>
+                        </td>
+                        <td class="px-6 py-4 transaction-type">
+                            <span class="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium
+                                {% if transaction.transaction_type == 'DEPOSIT' %}
+                                    bg-teal-100 text-teal-800
+                                {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                    bg-rose-100 text-rose-800
+                                {% elif transaction.transaction_type == 'BUY' %}
+                                    bg-violet-100 text-violet-800
+                                {% else %}
+                                    bg-emerald-100 text-emerald-800
+                                {% endif %}">
+                                <span class="flex-shrink-0 w-1.5 h-1.5 rounded-full mr-1.5
+                                    {% if transaction.transaction_type == 'DEPOSIT' %}bg-teal-500
+                                    {% elif transaction.transaction_type == 'WITHDRAWAL' %}bg-rose-500
+                                    {% elif transaction.transaction_type == 'BUY' %}bg-violet-500
+                                    {% else %}bg-emerald-500{% endif %}"></span>
+                                {{ transaction.transaction_type }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 transaction-amount">
+                            <div class="text-sm font-mono font-medium 
+                                {% if transaction.transaction_type == 'DEPOSIT' %}text-teal-600
+                                {% elif transaction.transaction_type == 'WITHDRAWAL' %}text-rose-600
+                                {% elif transaction.transaction_type == 'BUY' %}text-violet-600
+                                {% else %}text-emerald-600{% endif %}">
+                                {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'SELL' %}+{% endif %}
+                                {% if transaction.transaction_type == 'WITHDRAWAL' or transaction.transaction_type == 'BUY' %}-{% endif %}
+                                ₹{{ transaction.price|floatformat:2 }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 transaction-details">
+                            <div class="flex items-center space-x-2">
+                                {% if transaction.transaction_type == 'BUY' %}
+                                    <div class="p-1.5 bg-violet-100 rounded-lg">
+                                        <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-700">Purchased <span class="font-medium">{{ transaction.quantity }}</span> shares of <span class="font-medium text-violet-600">{{ transaction.stock_name }}</span></span>
+                                {% elif transaction.transaction_type == 'SELL' %}
+                                    <div class="p-1.5 bg-emerald-100 rounded-lg">
+                                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-700">Sold <span class="font-medium">{{ transaction.quantity }}</span> shares of <span class="font-medium text-emerald-600">{{ transaction.stock_name }}</span></span>
+                                {% elif transaction.transaction_type == 'DEPOSIT' %}
+                                    <div class="p-1.5 bg-teal-100 rounded-lg">
+                                        <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-700">Funds added to wallet</span>
+                                {% else %}
+                                    <div class="p-1.5 bg-rose-100 rounded-lg">
+                                        <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-700">Funds withdrawn from wallet</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-16 bg-white rounded-2xl shadow-lg border border-gray-200">
+        <div class="p-3 bg-indigo-100 rounded-full inline-flex">
+            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-gray-900">No transactions yet</h3>
+        <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Start trading stocks or add funds to your wallet to see your transaction history here.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+{% endblock %}
