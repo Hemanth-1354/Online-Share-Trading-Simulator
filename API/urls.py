@@ -13,7 +13,6 @@ urlpatterns = [
     path('add-money/', views.add_money, name='add_money'),
     path('withdraw/', views.withdraw_view, name='withdraw'),
     path('news/', views.news_view, name='news'),
-    # Adjusted to match the function name in views.py
     path('fetch-stock-price/', views.ajax_fetch_stock_price,
          name='fetch_stock_price'),
     path('search-stocks/', views.search_stocks, name='search_stocks'),

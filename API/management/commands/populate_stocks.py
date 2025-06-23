@@ -8,7 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         stocks = [
-            # Tech Stocks
             {'symbol': 'AAPL', 'name': 'Apple Inc.',
                 'price': Decimal('175.00')},
             {'symbol': 'MSFT', 'name': 'Microsoft Corporation',
@@ -30,7 +29,6 @@ class Command(BaseCommand):
             {'symbol': 'ORCL', 'name': 'Oracle Corporation',
                 'price': Decimal('125.00')},
 
-            # Indian Stocks - Banking
             {'symbol': 'RELIANCE', 'name': 'Reliance Industries Limited',
                 'price': Decimal('2800.00')},
             {'symbol': 'TCS', 'name': 'Tata Consultancy Services',
@@ -52,7 +50,6 @@ class Command(BaseCommand):
             {'symbol': 'BAJFINANCE', 'name': 'Bajaj Finance Limited',
                 'price': Decimal('7000.00')},
 
-            # Additional Indian Stocks - IT & Tech
             {'symbol': 'WIPRO', 'name': 'Wipro Limited',
                 'price': Decimal('450.00')},
             {'symbol': 'TECHM', 'name': 'Tech Mahindra Limited',
@@ -60,13 +57,11 @@ class Command(BaseCommand):
             {'symbol': 'HCLTECH', 'name': 'HCL Technologies Limited',
                 'price': Decimal('1300.00')},
 
-            # Additional Indian Stocks - Banking & Finance
             {'symbol': 'AXISBANK', 'name': 'Axis Bank Limited',
                 'price': Decimal('1000.00')},
             {'symbol': 'INDUSINDBK', 'name': 'IndusInd Bank Limited',
                 'price': Decimal('1400.00')},
 
-            # Additional Indian Stocks - Automobile
             {'symbol': 'MARUTI', 'name': 'Maruti Suzuki India Limited',
                 'price': Decimal('10000.00')},
             {'symbol': 'TATAMOTORS', 'name': 'Tata Motors Limited',
@@ -74,37 +69,31 @@ class Command(BaseCommand):
             {'symbol': 'M&M', 'name': 'Mahindra & Mahindra Limited',
                 'price': Decimal('1700.00')},
 
-            # Additional Indian Stocks - FMCG
             {'symbol': 'ITC', 'name': 'ITC Limited',
                 'price': Decimal('400.00')},
             {'symbol': 'NESTLEIND', 'name': 'Nestle India Limited',
                 'price': Decimal('2500.00')},
 
-            # Additional Indian Stocks - Pharma
             {'symbol': 'SUNPHARMA', 'name': 'Sun Pharmaceutical Industries Limited',
                 'price': Decimal('1200.00')},
             {'symbol': 'DRREDDY', 'name': 'Dr. Reddy\'s Laboratories Limited',
                 'price': Decimal('5500.00')},
 
-            # Additional Indian Stocks - Infrastructure
             {'symbol': 'LT', 'name': 'Larsen & Toubro Limited',
                 'price': Decimal('3200.00')},
             {'symbol': 'ADANIPORTS', 'name': 'Adani Ports and Special Economic Zone Limited',
                 'price': Decimal('1200.00')},
 
-            # Additional Indian Stocks - Energy
             {'symbol': 'ONGC', 'name': 'Oil and Natural Gas Corporation Limited',
                 'price': Decimal('200.00')},
             {'symbol': 'NTPC', 'name': 'NTPC Limited',
                 'price': Decimal('300.00')},
 
-            # Additional Indian Stocks - Metals
             {'symbol': 'TATASTEEL', 'name': 'Tata Steel Limited',
                 'price': Decimal('130.00')},
             {'symbol': 'JSWSTEEL', 'name': 'JSW Steel Limited',
                 'price': Decimal('800.00')},
 
-            # Additional US Stocks - Healthcare
             {'symbol': 'JNJ', 'name': 'Johnson & Johnson',
                 'price': Decimal('158.00')},
             {'symbol': 'PFE', 'name': 'Pfizer Inc.',

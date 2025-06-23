@@ -7,7 +7,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         stocks_to_add = [
-            # US Stocks
             {'symbol': 'NVDA', 'name': 'NVIDIA Corporation', 'price': Decimal('875.35')},
             {'symbol': 'AMD', 'name': 'Advanced Micro Devices', 'price': Decimal('178.90')},
             {'symbol': 'INTC', 'name': 'Intel Corporation', 'price': Decimal('42.75')},
@@ -24,7 +23,6 @@ class Command(BaseCommand):
             {'symbol': 'PEP', 'name': 'PepsiCo, Inc.', 'price': Decimal('171.95')},
             {'symbol': 'ADBE', 'name': 'Adobe Inc.', 'price': Decimal('485.75')},
 
-            # Indian Stocks
             {'symbol': 'HDFCBANK', 'name': 'HDFC Bank Limited', 'price': Decimal('1456.75')},
             {'symbol': 'ICICIBANK', 'name': 'ICICI Bank Limited', 'price': Decimal('1023.45')},
             {'symbol': 'SBIN', 'name': 'State Bank of India', 'price': Decimal('624.85')},
