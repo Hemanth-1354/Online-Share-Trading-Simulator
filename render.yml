@@ -1,11 +1,16 @@
 services:
   - type: web
-    name: OnlineShareTradingSystem-app
+    name: online-share-trading
     env: python
-    buildCommand: "./build.sh"
-    startCommand: "gunicorn OnlineShareTradingSystem.wsgi:application"
+    buildCommand: ./build.sh
+    startCommand: gunicorn OnlineShareTradingSystem.wsgi
+    plan: free
     envVars:
+      - key: DJANGO_SECRET_KEY
+        value: your-secret-key
       - key: DEBUG
         value: False
-      - key: SECRET_KEY
-        generateValue: true
+      - key: NEWS_API_KEY
+        value: your-news-api-key
+      - key: API_KEY
+        value: your-api-key
